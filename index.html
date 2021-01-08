@@ -4,7 +4,8 @@
 <head>    
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Dice Score</title>
-    <script type="text/javascript" src="/nifti-reader.js"></script>
+    <script src="/nifti-reader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
@@ -22,7 +23,7 @@
 
 document.getElementById('file').addEventListener('change', handleFileSelect, false);
 
-function readNIFTI(name, buf) {
+function readNIFTI(buf) {
 
     var header = nifti.readHeader(buf);
 
@@ -54,21 +55,19 @@ function makeSlice(file, start, length) {
 }
 
 function readFile(file) {
-
     var blob = makeSlice(file, 0, file.size);
 
     var reader = new FileReader();
-
+/*
     reader.onloadend = function (evt) {
         if (evt.target.readyState === FileReader.DONE) {
-            readNIFTI(file.name, evt.target.result);
+            readNIFTI(evt.target.result);
         }
     };
-
+*/
     reader.readAsArrayBuffer(blob);
 
-            
-    dice_coefficient(blob, blob);
+    return blob;
 }
 
 function dice_coefficient(string1, string2) {
@@ -100,11 +99,26 @@ function dice_coefficient(string1, string2) {
 }
 
 function handleFileSelect(evt) {
+    const files = evt.target.files;
 
-    var files = evt.target.files;
+    const data = readFile(files[0]);
 
-    readFile(files[0]);
+    axios.get('/data/StandardMask.nii', {
+            responseType: "arraybuffer"
+        })
+        .then(response => {
+            console.log(response);
 
+            const standard = new Blob([response.data]);
+
+            console.log(data)
+            console.log(standard);
+
+            dice_coefficient(standard, data);
+        })
+        .catch(error => {
+            console.log(error);
+        });
 }
 
 </script>
