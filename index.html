@@ -65,7 +65,7 @@ function readFile(file) {
             var byteArray = new Uint16Array(evt.target.result);
           
             var oReq = new XMLHttpRequest();
-            oReq.open("GET", "/data/StandardMask.nii", true);
+            oReq.open("GET", "/data/CMM-3.nii", true);
             oReq.responseType = "arraybuffer";
 
             oReq.onload = function (oEvent) {
