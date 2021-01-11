@@ -13,13 +13,13 @@
 
 <div class="container-fluid mt-5">
     <div class="row">
-        <div class="offset-1 col">
+        <div class="offset-1 col-10">
             <h1>Dice Score Calculator</h1>
             <div class="form-group mt-3">
                 <label for="fileSelect">Select NIfTI file: </label>
                 <input id="fileSelect" type="file" class="form-control-file">
             </div>
-            <h3 id="score" class="mt-3"></h3>
+            <div id="score"></div>
             <div id="results" class="mt-3"></div>
         </div>
     </div>
@@ -120,11 +120,18 @@ function diceCoefficient(input1, input2) {
 function handleFileSelect(evt) {
     const files = evt.target.files;
 
-    readFile(files[0]);
+    if (files.length > 0) {        
+        readFile(files[0]);
+    }
 }
 
-function updateScore(score) {
-    document.getElementById("score").textContent = "Score: " + score.toFixed(4);
+function updateScore(score) {    
+    var alert = document.getElementById("score");
+
+    var alertClass = score >= 0.9 ? "alert-success" : score >= 0.8 ? "alert-warning" : "alert-danger";
+    
+    alert.className = "alert " + alertClass + " mt-3";
+    alert.textContent = "Score: " + score.toFixed(4);
 }
 
 </script>
