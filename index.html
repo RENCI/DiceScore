@@ -4,7 +4,7 @@
 <head>    
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Dice Score</title>
-    <script src="/nifti-reader.js"></script>
+    <script src="./nifti-reader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
@@ -65,7 +65,7 @@ function readFile(file) {
             var byteArray = new Uint16Array(evt.target.result);
           
             var oReq = new XMLHttpRequest();
-            oReq.open("GET", "/data/CMM-3.nii", true);
+            oReq.open("GET", "./data/CMM-3.nii", true);
             oReq.responseType = "arraybuffer";
 
             oReq.onload = function (oEvent) {
