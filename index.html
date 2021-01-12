@@ -128,9 +128,10 @@ function updateScore(score) {
     var alert = document.getElementById("score");
 
     var alertClass = score >= 0.85 ? "alert-success" : score >= 0.5 ? "alert-warning" : "alert-danger";
+    var message =  score >= 0.85 ? "Congratulations!" : score >= 0.5 ? "Almost there!" : "Keep trying!";
     
     alert.className = "alert " + alertClass + " mt-3";
-    alert.textContent = "Score: " + score.toFixed(4);
+    alert.textContent = "Score: " + score.toFixed(4) + " — " + message;
 }
 
 </script>
