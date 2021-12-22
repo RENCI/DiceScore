@@ -25,6 +25,8 @@
 </div>
 
 <script type="text/javascript">
+	
+const goldStandardName = "./data/TrainingSpring2022_Completed.nii";
 
 document.getElementById("fileSelect").addEventListener("change", handleFileSelect, false);
 
@@ -70,7 +72,7 @@ function readFile(file) {
             var byteArray = new Uint16Array(evt.target.result);
           
             var oReq = new XMLHttpRequest();
-            oReq.open("GET", "./data/CMM-3.nii", true);
+            oReq.open("GET", goldStandardName, true);
             oReq.responseType = "arraybuffer";
 
             oReq.onload = function (oEvent) {
