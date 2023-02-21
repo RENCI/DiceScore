@@ -13,11 +13,16 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col">
+        <div class="col">            
             <div class="form-group">
-                <label for="fileSelect">Select NIfTI file: </label>
-                <input id="fileSelect" type="file" class="form-control-file">
+                <label for="fileSelect1">Select first NIfTI file: </label>
+                <input id="fileSelect1" type="file" class="form-control-file">
             </div>
+            <div class="form-group">
+                <label for="fileSelect2">Select second NIfTI file: </label>
+                <input id="fileSelect2" type="file" class="form-control-file">
+            </div>
+            <button id="button" type="button" class="btn btn-secondary" disabled>Compute Dice score</button>
             <div id="score"></div>
             <div id="results" class="mt-3"></div>
         </div>
@@ -26,9 +31,12 @@
 
 <script type="text/javascript">
 	
-const goldStandardName = "./data/TrainingSpring2022_Completed.nii";
+let byteArray1 = null;
+let byteArray2 = null;
 
-document.getElementById("fileSelect").addEventListener("change", handleFileSelect, false);
+document.getElementById("fileSelect1").addEventListener("change", handleFileSelect1, false);
+document.getElementById("fileSelect2").addEventListener("change", handleFileSelect2, false);
+document.getElementById("button").addEventListener("click", handleButtonClick, false);
 
 function readNIFTI(buf) {
     var header = nifti.readHeader(buf);
@@ -60,34 +68,25 @@ function makeSlice(file, start, length) {
     return null;
 }
 
-function readFile(file) {
-    var blob = makeSlice(file, 0, file.size);
+function readFile(which, file) {
+    const blob = makeSlice(file, 0, file.size);
 
-    var reader = new FileReader();
+    const reader = new FileReader();
 
     reader.onloadend = function (evt) {
         if (evt.target.readyState === FileReader.DONE) {
             //readNIFTI(evt.target.result);
             
-            var byteArray = new Uint16Array(evt.target.result);
-          
-            var oReq = new XMLHttpRequest();
-            oReq.open("GET", goldStandardName, true);
-            oReq.responseType = "arraybuffer";
+            if (which === 1) {
+                byteArray1 = new Uint16Array(evt.target.result);
+            }
+            else { 
+                byteArray2 = new Uint16Array(evt.target.result);
+            }
 
-            oReq.onload = function (oEvent) {
-                var arrayBuffer = oReq.response; 
-                
-                if (arrayBuffer) {
-                    var byteArray2 = new Uint16Array(arrayBuffer);
-
-                    var score = diceCoefficient(byteArray, byteArray2);
-
-                    updateScore(score);
-                }
-            };
-
-            oReq.send(null);
+            if (byteArray1 && byteArray2) {
+                document.getElementById("button").disabled = false;
+            }
          }
     };
 
@@ -118,12 +117,24 @@ function diceCoefficient(input1, input2) {
     return dice;  
 }
 
-function handleFileSelect(evt) {
+function handleFileSelect1(evt) {
     const files = evt.target.files;
 
     if (files.length > 0) {        
-        readFile(files[0]);
+        readFile(1, files[0]);
     }
+}
+
+function handleFileSelect2(evt) {
+    const files = evt.target.files;
+
+    if (files.length > 0) {        
+        readFile(2, files[0]);
+    }
+}
+
+function handleButtonClick() {
+    updateScore(diceCoefficient(byteArray1, byteArray2));
 }
 
 function updateScore(score) {    
